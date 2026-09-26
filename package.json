@@ -4,8 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
     "s1": "nodemon servidor1-paginas.js",
     "s2": "nodemon servidor2-pedidos.js",
     "s3": "nodemon servidor3-estoque.js"
