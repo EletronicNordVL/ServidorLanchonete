@@ -1,13 +1,13 @@
 [README.md](https://github.com/user-attachments/files/32940325/README.md)
 # 🍔 Sistema de Lanchonete - Arquitetura de Servidores Node.js
 
-Projeto acadêmico desenvolvido para a disciplina de **Sistemas Web** (Trabalho N1). O objetivo principal é implementar uma arquitetura web distribuída e desacoplada, dividida em três servidores independentes executando como processos separados no Node.js.
+Esse é um projeto acadêmico desenvolvido para a disciplina de **Sistemas Web** (Trabalho N1). O objetivo principal é implementar uma arquitetura web distribuída e desacoplada, dividida em três servidores independentes executando como processos separados no Node.js e com a utilização do Express.
 
 ---
 
 ## 📐 Arquitetura do Sistema
 
-A aplicação segue estritamente a arquitetura em camadas e o fluxo de dados unidirecional:
+Vai funcionar da seguinte maneira: A aplicação segue estritamente a arquitetura em camadas e o fluxo de dados será unidirecional.
 
 ```
 [ Navegador ] ---- (1) GET ----> [ Servidor 1: Páginas Estáticas (Porta 3000) ]
@@ -43,7 +43,7 @@ A aplicação segue estritamente a arquitetura em camadas e o fluxo de dados uni
 
 ### 📦 Servidor 3: API de Estoque (`servidor3-estoque.js`)
 * **Porta:** `3002`
-* **Função:** Controle isolado de estoque dos ingredientes/produtos em memória.
+* **Função:** Terá o controle isolado de estoque dos ingredientes/produtos em memória.
 * **Rotas:**
   * `GET /estoque` — Situação atual do estoque (Código, Nome, Quantidade).
   * `POST /baixa` — Realiza a baixa de itens com **operação atômica** (se um item não tiver quantidade suficiente, o pedido inteiro é recusado).
