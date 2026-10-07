@@ -41,7 +41,7 @@ app.post('/baixa', (req, res) => {
        return res.status(400).json({ error: 'Lista de itens procurada é inválida.' });
    }
 
-   /* Verificar se a quantidade de produtos solicitada é suficiente para o estoque */
+   /* Ver se a quantidade de comida é suficiente para o estoque */
 for (const item of itens) {
    const cardapio = estoque.find(p => p.CodProduto === item.CodProduto);
 
@@ -59,7 +59,7 @@ for (const item of itens) {
      cardapio.Estoque -= item.Qtd;
    }
 
-   return res.json({ mensagem: 'A baixa foi realizada com sucesso!' });
+   return res.json({ mensagem: 'A baixa foi realizada com sucesso, meu nobre!' });
    
 });
 
