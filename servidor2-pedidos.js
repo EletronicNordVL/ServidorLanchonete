@@ -3,23 +3,23 @@ const app = express();
 
 app.use(express.json());
 
-/* Lista de pedidos salvos na memória */
+/* Lista de pedidos*/
 let pedidos = [];
 
-/* Função para listar os produtos do cardápio com informações de estoque */
+/* Listar os produtos do cardápio com informações de estoque */
 let cardapio = [
   { CodProduto: 1, NomeProduto: 'Hamburguer do Jacquin', Preco: 5 },
   { CodProduto: 2, NomeProduto: 'Refrigerante Pepsi-Cola de 350ml', Preco: 3 },
   { CodProduto: 3, NomeProduto: 'Batatinha do Fogaça', Preco: 2 }
 ];
 
-/* Rota para listar os produtos do cardápio com informações de estoque */
+/* Rota de listar os produtos do cardápio com informações de estoque */
 app.get('/produtos', async (req, res) => {
  try {
       const resposta = await fetch('http://localhost:3002/estoque'); 
       const dadosEstoque = await resposta.json();
 
-/* Função para combinar os dados do cardápio com as informações de estoque */
+/* Combinar os dados do cardápio com as informações de estoque */
 const listaCompleta = cardapio.map(prod => {
   const itemEstoque = dadosEstoque.find(e => e.CodProduto === prod.CodProduto);
   return { 
@@ -34,12 +34,12 @@ const listaCompleta = cardapio.map(prod => {
   }
 
 catch (error) {
-      console.error('Houve um erro ao buscar os produtos do estoque:', error);
-      return res.status(500).json({ error: 'Houve um erro ao buscar os produtos do estoque.' });
+      console.error('Houve um erro bizarro ao buscar os produtos do estoque:', error);
+      return res.status(500).json({ error: 'Houve um erro bizarro ao buscar os produtos do estoque.' });
 }
   });
 
-  /* Rota dos Pedidos do App.Post */
+  /* Rota dos Pedidos (Post) */
 app.post('/pedidos/:id/fechar', (req, res) => {
   const idPedido = parseInt(req.params.id);
   const pedido = pedidos.find(p => p.id === idPedido);
@@ -48,10 +48,10 @@ app.post('/pedidos/:id/fechar', (req, res) => {
     return res.status(404).json({ error: 'Pedido não encontrado.' });
   } 
   pedido.status = 'Fechado';
-  return res.json({ mensagem: 'O pedido foi fechado com sucesso!', pedido });
+  return res.json({ mensagem: 'O pedido foi fechado com sucesso, meu nobre!', pedido });
 });
 
-/* Rota para devolver a lista de pedidos atuais */
+/* Rota para devolver a lista de pedidos */
 app.get('/pedidos', (req, res) => {
   res.json(pedidos);
 });
@@ -70,7 +70,7 @@ app.post('/pedidos', async (req, res) => {
       return res.status(400).json({ error: 'O nome do cliente deve ter pelo menos 3 caracteres.' });
    }
 
-   /* Função de cálculo do Valor Total (VT)*/
+   /* Cálculo do Valor Total (VT)*/
       let valorTotal = 0;
       for (const item of Itens) {
         const produtoNoCardapio = cardapio.find(p => p.CodProduto === item.CodProduto);
@@ -79,7 +79,6 @@ app.post('/pedidos', async (req, res) => {
         }
       }
      
-    /* Bloco de Try e Catch com o uso de Fetch */
      try {
       const respostaBaixa = await fetch('http://localhost:3002/baixa', {
         method: 'POST',
@@ -93,7 +92,7 @@ app.post('/pedidos', async (req, res) => {
         return res.status(respostaBaixa.status).json(dadosResposta);
       }
 
-      /* Caso o pedido seja realizado com sucesso, ele será adicionado ao array de pedidos */
+      /* Se o pedido for realizado com sucesso, ele será adicionado ao array de pedidos */
         const novoPedido = {
       id: pedidos.length + 1,
       NomeCliente,
@@ -111,7 +110,7 @@ app.post('/pedidos', async (req, res) => {
     }
   });
 
-    /*Função para iniciar o Servidor 2 rodando */
+    /* Iniciar o Servidor 2 e fazer rodar */
   app.listen(3001, () => {
   console.log('Servidor 2 (Pedidos) funcionando em http://localhost:3001');
 });

@@ -33,7 +33,7 @@ app.get('/estoque', (req, res) => {
   res.json(estoque);
 });
 
-/* Rota para dar baixa no estoque */
+/* Dar (Lá ele) baixa no estoque */
 app.post('/baixa', (req, res) => {
    const itens = req.body;
 
@@ -41,7 +41,7 @@ app.post('/baixa', (req, res) => {
        return res.status(400).json({ error: 'Lista de itens procurada é inválida.' });
    }
 
-   /* Função para verificar se a quantidade de produtos solicitada é suficiente para o estoque */
+   /* Verificar se a quantidade de produtos solicitada é suficiente para o estoque */
 for (const item of itens) {
    const cardapio = estoque.find(p => p.CodProduto === item.CodProduto);
 
@@ -53,7 +53,7 @@ if (!cardapio) {
      }
    }
 
-   /* Função para dar baixa no estoque */
+   /* Lógica para dar baixa no estoque */
 for (const item of itens) {
      const cardapio = estoque.find(p => p.CodProduto === item.CodProduto);
      cardapio.Estoque -= item.Qtd;
@@ -63,7 +63,7 @@ for (const item of itens) {
    
 });
 
-/* Comando para dar início ao Servidor 3 (Estoque) na porta 3002 */
+/* Iniciar o Servidor 3 (Estoque) na porta 3002 */
 app.listen(3002, () => {
   console.log('O Servidor 3 (Estoque) está funcionando em http://localhost:3002');
 });
