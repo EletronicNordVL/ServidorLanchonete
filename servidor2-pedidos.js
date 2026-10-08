@@ -1,10 +1,24 @@
 const express = require('express');
 const app = express();
 
+/* Permitir que as páginas do Servidor 1 acessem esta API */
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+
+  next();
+});
+
 app.use(express.json());
 
 /* Lista de pedidos (Bem simples)*/
 let pedidos = [];
+let proximoIdPedido = 1;
 
 /* Listar os produtos do cardápio com informações de estoque */
 let cardapio = [
@@ -17,6 +31,11 @@ let cardapio = [
 app.get('/produtos', async (req, res) => {
  try {
       const resposta = await fetch('http://localhost:3002/estoque'); 
+
+      if (!resposta.ok) {
+        return res.status(500).json({ error: 'Não foi possível consultar o estoque.' });
+      }
+
       const dadosEstoque = await resposta.json();
 
 /* Combinar os dados do cardápio com as informações de estoque */
@@ -41,14 +60,16 @@ catch (error) {
 
   /* Pedidos (Post) */
 app.post('/pedidos/:id/fechar', (req, res) => {
-  const idPedido = parseInt(req.params.id);
-  const pedido = pedidos.find(p => p.id === idPedido);
+  const idPedido = Number(req.params.id);
+  const indicePedido = pedidos.findIndex(p => p.id === idPedido);
 
-  if (!pedido) {
+  if (indicePedido < 0) {
     return res.status(404).json({ error: 'Pedido não encontrado.' });
-  } 
-  pedido.status = 'Fechado';
-  return res.json({ mensagem: 'O pedido foi fechado com sucesso, meu nobre!', pedido });
+  }
+
+  const pedidoFechado = pedidos.splice(indicePedido, 1)[0];
+  pedidoFechado.status = 'Fechado';
+  return res.json({ mensagem: 'O pedido foi fechado com sucesso, meu nobre!', pedido: pedidoFechado });
 });
 
 /* Devolver a lista de pedidos */
@@ -58,32 +79,60 @@ app.get('/pedidos', (req, res) => {
 
 /* Rota dos Pedidos do App.Post */
 app.post('/pedidos', async (req, res) => {
-    const { NomeCliente, Itens } = req.body;
+    const { NomeCliente, Itens } = req.body || {};
     
     /* Mostrar um erro na tela se inserir os dados do pedido */
-    if (!NomeCliente || !Array.isArray(Itens) || Itens.length === 0) {
+    if (typeof NomeCliente !== 'string' || !Array.isArray(Itens) || Itens.length === 0) {
       return res.status(400).json({ error: 'Os dados do pedido inserido são inválidos.' });
     }
 
   /* Caso o nome do cliente tiver menos de 3 caracteres, não pode aceitar de jeito nenhum. */
-   if (NomeCliente.length < 3) {
+   const nomeClienteValido = NomeCliente.trim();
+   if (nomeClienteValido.length < 3) {
       return res.status(400).json({ error: 'O nome do cliente deve ter pelo menos 3 caracteres.' });
    }
 
-   /* Calcular valor total (VT)*/
-      let valorTotal = 0;
-      for (const item of Itens) {
-        const produtoNoCardapio = cardapio.find(p => p.CodProduto === item.CodProduto);
-        if (produtoNoCardapio) {
-          valorTotal += produtoNoCardapio.Preco * item.Qtd;
-        }
+   const itensDoPedido = [];
+
+   for (const item of Itens) {
+      if (!item || typeof item.CodProduto !== 'number' || item.CodProduto <= 0 || item.CodProduto % 1 !== 0 ||
+          typeof item.Qtd !== 'number' || item.Qtd <= 0 || item.Qtd % 1 !== 0) {
+        return res.status(400).json({ error: 'Os itens do pedido são inválidos.' });
       }
+
+      const produtoNoCardapio = cardapio.find(p => p.CodProduto === item.CodProduto);
+      if (!produtoNoCardapio) {
+        return res.status(404).json({ error: `O produto com o código ${item.CodProduto} não foi encontrado no cardápio.` });
+      }
+
+      const itemExistente = itensDoPedido.find(p => p.CodProduto === item.CodProduto);
+      if (itemExistente) {
+        itemExistente.Qtd += item.Qtd;
+      } else {
+        itensDoPedido.push({
+          CodProduto: produtoNoCardapio.CodProduto,
+          NomeProduto: produtoNoCardapio.NomeProduto,
+          Preco: produtoNoCardapio.Preco,
+          Qtd: item.Qtd
+        });
+      }
+   }
+
+   /* Calcular valor total (VT)*/
+   let valorTotal = 0;
+   for (const item of itensDoPedido) {
+      valorTotal += item.Preco * item.Qtd;
+   }
+
+   const itensParaBaixa = itensDoPedido.map(item => {
+      return { CodProduto: item.CodProduto, Qtd: item.Qtd };
+   });
      
      try {
       const respostaBaixa = await fetch('http://localhost:3002/baixa', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(Itens)
+        body: JSON.stringify(itensParaBaixa)
       });
 
       const dadosResposta = await respostaBaixa.json();
@@ -94,13 +143,14 @@ app.post('/pedidos', async (req, res) => {
 
       /* Se o pedido for realizado com sucesso, ele entrará no array de pedidos */
         const novoPedido = {
-      id: pedidos.length + 1,
-      NomeCliente,
-      Itens,
+      id: proximoIdPedido,
+      NomeCliente: nomeClienteValido,
+      Itens: itensDoPedido,
       ValorTotal: valorTotal,
       status: 'Aberto'
         };
 
+        proximoIdPedido++;
         pedidos.push(novoPedido); 
         return res.status(201).json(novoPedido);
 
@@ -109,6 +159,15 @@ app.post('/pedidos', async (req, res) => {
       return res.status(500).json({ error: 'Não foi possível conectar ao servidor de estoque.' });
     }
   });
+
+/* Tratar JSON inválido recebido nas requisições */
+app.use((error, req, res, next) => {
+  if (error.status === 400) {
+    return res.status(400).json({ error: 'O JSON enviado é inválido.' });
+  }
+
+  next(error);
+});
 
 /* Iniciar o Servidor 2 e fazer rodar */
   app.listen(3001, () => {

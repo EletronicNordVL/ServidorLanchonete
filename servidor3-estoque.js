@@ -16,13 +16,30 @@ app.post('/reposicao', (req, res) => {
     return res.status(400).json({ error: 'A lista de itens encontrada é inválida.' });
   }
 
+  const itensAgrupados = [];
+
   for (const item of itens) {
+    if (!item || typeof item.CodProduto !== 'number' || item.CodProduto <= 0 || item.CodProduto % 1 !== 0 ||
+        typeof item.Qtd !== 'number' || item.Qtd <= 0 || item.Qtd % 1 !== 0) {
+      return res.status(400).json({ error: 'Os itens da reposição são inválidos.' });
+    }
+
     const cardapio = estoque.find(p => p.CodProduto === item.CodProduto);
 
     if (!cardapio) {
       return res.status(404).json({ error: `O produto com o código ${item.CodProduto} não foi encontrado no sistema.` });
     }
 
+    const itemExistente = itensAgrupados.find(p => p.CodProduto === item.CodProduto);
+    if (itemExistente) {
+      itemExistente.Qtd += item.Qtd;
+    } else {
+      itensAgrupados.push({ CodProduto: item.CodProduto, Qtd: item.Qtd });
+    }
+  }
+
+  for (const item of itensAgrupados) {
+    const cardapio = estoque.find(p => p.CodProduto === item.CodProduto);
     cardapio.Estoque += item.Qtd;
   }
 
@@ -41,20 +58,38 @@ app.post('/baixa', (req, res) => {
        return res.status(400).json({ error: 'Lista de itens procurada é inválida.' });
    }
 
+   const itensAgrupados = [];
+
    /* Ver se a quantidade de comida é suficiente para o estoque */
 for (const item of itens) {
-   const cardapio = estoque.find(p => p.CodProduto === item.CodProduto);
+     if (!item || typeof item.CodProduto !== 'number' || item.CodProduto <= 0 || item.CodProduto % 1 !== 0 ||
+         typeof item.Qtd !== 'number' || item.Qtd <= 0 || item.Qtd % 1 !== 0) {
+       return res.status(400).json({ error: 'Os itens da baixa são inválidos.' });
+     }
 
-if (!cardapio) {
+     const cardapio = estoque.find(p => p.CodProduto === item.CodProduto);
+
+     if (!cardapio) {
        return res.status(404).json({ error: `O produto com o código ${item.CodProduto} não foi encontrado no sistema.` });
      }
+
+     const itemExistente = itensAgrupados.find(p => p.CodProduto === item.CodProduto);
+     if (itemExistente) {
+       itemExistente.Qtd += item.Qtd;
+     } else {
+       itensAgrupados.push({ CodProduto: item.CodProduto, Qtd: item.Qtd });
+     }
+   }
+
+for (const item of itensAgrupados) {
+     const cardapio = estoque.find(p => p.CodProduto === item.CodProduto);
      if (cardapio.Estoque < item.Qtd) {
        return res.status(400).json({ error: 'A quantidade calculada é insuficiente para o estoque.' });
      }
    }
 
    /* Lógica para dar baixa no estoque */
-for (const item of itens) {
+for (const item of itensAgrupados) {
      const cardapio = estoque.find(p => p.CodProduto === item.CodProduto);
      cardapio.Estoque -= item.Qtd;
    }

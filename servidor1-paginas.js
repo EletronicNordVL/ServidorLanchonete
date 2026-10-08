@@ -5,7 +5,7 @@ const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
-  res.send('Servidor 1 (Páginas Estáticas) está rodando com sucesso!');
+  res.sendFile(path.join(__dirname, 'public', 'cardapio.html'));
 });
 
 app.listen(3000, () => {
