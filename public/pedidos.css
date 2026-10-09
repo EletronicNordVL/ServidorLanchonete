@@ -1,0 +1,182 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: #f4f4f4;
+  color: #222222;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+}
+
+header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #cccccc;
+}
+
+.cabecalho,
+main {
+  width: 90%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.cabecalho,
+.titulo-pedidos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cabecalho {
+  padding: 15px 0;
+}
+
+h1,
+h2,
+h3 {
+  margin-top: 0;
+}
+
+h1,
+.titulo-pedidos h2 {
+  margin-bottom: 0;
+}
+
+h1 {
+  font-size: 26px;
+}
+
+nav a {
+  margin-left: 15px;
+  color: #245b35;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+nav a[aria-current="page"] {
+  text-decoration: underline;
+}
+
+main {
+  padding: 20px 0 35px;
+}
+
+section,
+.pedido {
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+}
+
+.pedido {
+  margin-top: 15px;
+  background-color: #fafafa;
+}
+
+.pedido h3 {
+  margin-bottom: 5px;
+}
+
+.pedido p {
+  margin: 4px 0;
+}
+
+button {
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid #999999;
+  border-radius: 3px;
+  background-color: #356b46;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+}
+
+button:disabled {
+  background-color: #888888;
+  cursor: default;
+}
+
+.botao-fechar {
+  margin-top: 12px;
+  background-color: #6b532f;
+}
+
+.tabela-responsiva {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  margin-top: 10px;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 9px;
+  border: 1px solid #cccccc;
+  text-align: left;
+}
+
+th {
+  background-color: #eeeeee;
+}
+
+.mensagem {
+  min-height: 24px;
+  margin: 12px 0 0;
+  padding: 8px;
+  border-left: 4px solid transparent;
+}
+
+.mensagem:empty {
+  padding: 0;
+}
+
+.mensagem.erro {
+  background-color: #fbeaea;
+  border-left-color: #9b3333;
+  color: #742525;
+}
+
+.mensagem.sucesso {
+  background-color: #e8f4eb;
+  border-left-color: #356b46;
+  color: #245133;
+}
+
+.mensagem.informacao {
+  background-color: #eeeeee;
+  border-left-color: #777777;
+  color: #333333;
+}
+
+@media screen and (max-width: 600px) {
+  .cabecalho,
+  .titulo-pedidos {
+    display: block;
+  }
+
+  nav {
+    margin-top: 10px;
+  }
+
+  nav a {
+    margin-right: 15px;
+    margin-left: 0;
+  }
+
+  section,
+  .pedido {
+    padding: 15px;
+  }
+
+  .titulo-pedidos button {
+    width: 100%;
+    margin-top: 12px;
+  }
+}

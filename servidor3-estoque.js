@@ -19,8 +19,8 @@ app.post('/reposicao', (req, res) => {
   const itensAgrupados = [];
 
   for (const item of itens) {
-    if (!item || typeof item.CodProduto !== 'number' || item.CodProduto <= 0 || item.CodProduto % 1 !== 0 ||
-        typeof item.Qtd !== 'number' || item.Qtd <= 0 || item.Qtd % 1 !== 0) {
+    if (!item || !Number.isSafeInteger(item.CodProduto) || item.CodProduto <= 0 ||
+        !Number.isSafeInteger(item.Qtd) || item.Qtd <= 0) {
       return res.status(400).json({ error: 'Os itens da reposição são inválidos.' });
     }
 
@@ -32,9 +32,19 @@ app.post('/reposicao', (req, res) => {
 
     const itemExistente = itensAgrupados.find(p => p.CodProduto === item.CodProduto);
     if (itemExistente) {
+      if (!Number.isSafeInteger(itemExistente.Qtd + item.Qtd)) {
+        return res.status(400).json({ error: 'Os itens da reposição são inválidos.' });
+      }
       itemExistente.Qtd += item.Qtd;
     } else {
       itensAgrupados.push({ CodProduto: item.CodProduto, Qtd: item.Qtd });
+    }
+  }
+
+  for (const item of itensAgrupados) {
+    const cardapio = estoque.find(p => p.CodProduto === item.CodProduto);
+    if (!Number.isSafeInteger(cardapio.Estoque + item.Qtd)) {
+      return res.status(400).json({ error: 'Os itens da reposição são inválidos.' });
     }
   }
 
@@ -62,8 +72,8 @@ app.post('/baixa', (req, res) => {
 
    /* Ver se a quantidade de comida é suficiente para o estoque */
 for (const item of itens) {
-     if (!item || typeof item.CodProduto !== 'number' || item.CodProduto <= 0 || item.CodProduto % 1 !== 0 ||
-         typeof item.Qtd !== 'number' || item.Qtd <= 0 || item.Qtd % 1 !== 0) {
+     if (!item || !Number.isSafeInteger(item.CodProduto) || item.CodProduto <= 0 ||
+         !Number.isSafeInteger(item.Qtd) || item.Qtd <= 0) {
        return res.status(400).json({ error: 'Os itens da baixa são inválidos.' });
      }
 
@@ -75,6 +85,9 @@ for (const item of itens) {
 
      const itemExistente = itensAgrupados.find(p => p.CodProduto === item.CodProduto);
      if (itemExistente) {
+       if (!Number.isSafeInteger(itemExistente.Qtd + item.Qtd)) {
+         return res.status(400).json({ error: 'Os itens da baixa são inválidos.' });
+       }
        itemExistente.Qtd += item.Qtd;
      } else {
        itensAgrupados.push({ CodProduto: item.CodProduto, Qtd: item.Qtd });

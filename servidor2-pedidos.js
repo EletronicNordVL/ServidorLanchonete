@@ -53,8 +53,8 @@ const listaCompleta = cardapio.map(prod => {
   }
 
 catch (error) {
-      console.error('Houve um erro bizarro ao buscar os produtos do estoque:', error);
-      return res.status(500).json({ error: 'Houve um erro bizarro ao buscar os produtos do estoque.' });
+      console.error('Houve um erro ao buscar os produtos do estoque:', error);
+      return res.status(500).json({ error: 'Não foi possível consultar o estoque.' });
 }
   });
 
@@ -95,8 +95,8 @@ app.post('/pedidos', async (req, res) => {
    const itensDoPedido = [];
 
    for (const item of Itens) {
-      if (!item || typeof item.CodProduto !== 'number' || item.CodProduto <= 0 || item.CodProduto % 1 !== 0 ||
-          typeof item.Qtd !== 'number' || item.Qtd <= 0 || item.Qtd % 1 !== 0) {
+      if (!item || !Number.isSafeInteger(item.CodProduto) || item.CodProduto <= 0 ||
+          !Number.isSafeInteger(item.Qtd) || item.Qtd <= 0) {
         return res.status(400).json({ error: 'Os itens do pedido são inválidos.' });
       }
 
@@ -107,6 +107,9 @@ app.post('/pedidos', async (req, res) => {
 
       const itemExistente = itensDoPedido.find(p => p.CodProduto === item.CodProduto);
       if (itemExistente) {
+        if (!Number.isSafeInteger(itemExistente.Qtd + item.Qtd)) {
+          return res.status(400).json({ error: 'Os itens do pedido são inválidos.' });
+        }
         itemExistente.Qtd += item.Qtd;
       } else {
         itensDoPedido.push({
