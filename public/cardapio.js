@@ -154,10 +154,13 @@ function mostrarItensSelecionados() {
       const novaQuantidade = Number(campoQuantidade.value);
 
       if (
-        !produto ||
-        !Number.isSafeInteger(novaQuantidade) ||
-        novaQuantidade <= 0 ||
-        novaQuantidade > produto.Estoque
+        !item ||
+        typeof item.CodProduto !== "number" ||
+        item.CodProduto % 1 !== 0 ||
+        item.CodProduto <= 0 ||
+        typeof item.Qtd !== "number" ||
+        item.Qtd % 1 !== 0 ||
+        item.Qtd <= 0
       ) {
         campoQuantidade.value = item.Qtd;
         mostrarMensagem(
@@ -277,7 +280,7 @@ botaoAdicionar.addEventListener("click", () => {
     return;
   }
 
-  if (!Number.isSafeInteger(quantidade) || quantidade <= 0) {
+  if (quantidade % 1 !== 0 || quantidade <= 0) {
     mostrarMensagem(
       "Informe uma quantidade inteira válida e maior que zero.",
       "erro",
@@ -292,10 +295,7 @@ botaoAdicionar.addEventListener("click", () => {
     ? itemExistente.Qtd + quantidade
     : quantidade;
 
-  if (
-    !Number.isSafeInteger(quantidadeFinal) ||
-    quantidadeFinal > produto.Estoque
-  ) {
+  if (quantidadeFinal > produto.Estoque) {
     mostrarMensagem(
       `A quantidade solicitada é maior que o estoque disponível (${produto.Estoque}).`,
       "erro",

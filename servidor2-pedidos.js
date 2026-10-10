@@ -1,7 +1,8 @@
 const express = require("express");
 const app = express();
 
-/* Permitir que as páginas do Servidor 1 acessem esta API */
+/* A página (Porta 3000) vai chamar a API da porta 3001, que é de uma outra origem. No entanto, 
+o navegador mandará um "Options" antes do POST (Preflight) e estes caveçalhos irão liberar o acesso. */
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -112,9 +113,11 @@ app.post("/pedidos", async (req, res) => {
   for (const item of Itens) {
     if (
       !item ||
-      !Number.isSafeInteger(item.CodProduto) ||
+      typeof item.CodProduto !== "number" ||
+      item.CodProduto % 1 !== 0 ||
       item.CodProduto <= 0 ||
-      !Number.isSafeInteger(item.Qtd) ||
+      typeof item.Qtd !== "number" ||
+      item.Qtd % 1 !== 0 ||
       item.Qtd <= 0
     ) {
       return res
@@ -126,11 +129,9 @@ app.post("/pedidos", async (req, res) => {
       (p) => p.CodProduto === item.CodProduto,
     );
     if (!produtoNoCardapio) {
-      return res
-        .status(404)
-        .json({
-          error: `O produto com o código ${item.CodProduto} não foi encontrado no cardápio.`,
-        });
+      return res.status(404).json({
+        error: `O produto com o código ${item.CodProduto} não foi encontrado no cardápio.`,
+      });
     }
 
     const itemExistente = itensDoPedido.find(

@@ -27,9 +27,11 @@ app.post("/reposicao", (req, res) => {
   for (const item of itens) {
     if (
       !item ||
-      !Number.isSafeInteger(item.CodProduto) ||
+      typeof item.CodProduto !== "number" ||
+      item.CodProduto % 1 !== 0 ||
       item.CodProduto <= 0 ||
-      !Number.isSafeInteger(item.Qtd) ||
+      typeof item.Qtd !== "number" ||
+      item.Qtd % 1 !== 0 ||
       item.Qtd <= 0
     ) {
       return res
@@ -40,11 +42,9 @@ app.post("/reposicao", (req, res) => {
     const produto = estoque.find((p) => p.CodProduto === item.CodProduto);
 
     if (!produto) {
-      return res
-        .status(404)
-        .json({
-          error: `O produto com o código ${item.CodProduto} não foi encontrado no sistema.`,
-        });
+      return res.status(404).json({
+        error: `O produto com o código ${item.CodProduto} não foi encontrado no sistema.`,
+      });
     }
 
     const itemExistente = itensAgrupados.find(
@@ -85,9 +85,11 @@ app.post("/baixa", (req, res) => {
   for (const item of itens) {
     if (
       !item ||
-      !Number.isSafeInteger(item.CodProduto) ||
+      typeof item.CodProduto !== "number" ||
+      item.CodProduto % 1 !== 0 ||
       item.CodProduto <= 0 ||
-      !Number.isSafeInteger(item.Qtd) ||
+      typeof item.Qtd !== "number" ||
+      item.Qtd % 1 !== 0 ||
       item.Qtd <= 0
     ) {
       return res
@@ -98,11 +100,9 @@ app.post("/baixa", (req, res) => {
     const produto = estoque.find((p) => p.CodProduto === item.CodProduto);
 
     if (!produto) {
-      return res
-        .status(404)
-        .json({
-          error: `O produto com o código ${item.CodProduto} não foi encontrado no sistema.`,
-        });
+      return res.status(404).json({
+        error: `O produto com o código ${item.CodProduto} não foi encontrado no sistema.`,
+      });
     }
 
     const itemExistente = itensAgrupados.find(
@@ -118,11 +118,9 @@ app.post("/baixa", (req, res) => {
   for (const item of itensAgrupados) {
     const produto = estoque.find((p) => p.CodProduto === item.CodProduto);
     if (produto.Estoque < item.Qtd) {
-      return res
-        .status(400)
-        .json({
-          error: `Estoque insuficiente de ${produto.NomeProduto}: disponível ${produto.Estoque}, solicitado ${item.Qtd}.`,
-        });
+      return res.status(400).json({
+        error: `Estoque insuficiente de ${produto.NomeProduto}: disponível ${produto.Estoque}, solicitado ${item.Qtd}.`,
+      });
     }
   }
 
