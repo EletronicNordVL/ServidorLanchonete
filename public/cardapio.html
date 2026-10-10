@@ -1,62 +1,77 @@
-<!DOCTYPE html> 
+<!doctype html>
 <html lang="pt-BR">
-<head> 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cardápio - Lanchonete</title>
-    <link rel="stylesheet" href="cardapio.css">
-</head> 
-<body>
+    <link rel="stylesheet" href="cardapio.css" />
+  </head>
+  <body>
     <header>
-        <div class="cabecalho">
-            <h1>Lanchonete</h1>
-            <nav>
-                <a href="/" aria-current="page">Cardápio</a>
-                <a href="pedidos.html">Pedidos</a>
-            </nav>
-        </div>
+      <div class="cabecalho">
+        <h1>Lanchonete</h1>
+        <nav>
+          <a href="/" aria-current="page">Cardápio</a>
+          <a href="pedidos.html">Pedidos</a>
+        </nav>
+      </div>
     </header>
 
     <main>
-        <section>
-            <h2>Cardápio</h2>
-            <label for="searchInput">Pesquisar produto</label>
-            <input id="searchInput" type="text" placeholder="Digite o nome ou código do produto">
-            <div id="cardapio" class="tabela-responsiva"></div>
-        </section>
+      <section>
+        <h2>Cardápio</h2>
+        <label for="searchInput">Pesquisar produto</label>
+        <input
+          id="searchInput"
+          type="text"
+          placeholder="Digite o nome ou código do produto"
+        />
+        <div id="cardapio" class="tabela-responsiva"></div>
+      </section>
 
-        <section>
-            <h2>Monte seu pedido</h2>
+      <section>
+        <h2>Monte o seu pedido</h2>
 
-            <label for="nomeCliente">Nome do cliente</label>
-            <input id="nomeCliente" type="text" maxlength="80" autocomplete="name">
+        <label for="nomeCliente">Nome do cliente</label>
+        <input
+          id="nomeCliente"
+          type="text"
+          maxlength="80"
+          autocomplete="name"
+        />
 
-            <div class="campos-produto">
-                <div>
-                    <label for="selecionarProduto">Produto</label>
-                    <select id="selecionarProduto">
-                        <option value="">Selecione um produto</option>
-                    </select>
-                </div>
+        <div class="campos-produto">
+          <div>
+            <label for="selecionarProduto">Produto</label>
+            <select id="selecionarProduto">
+              <option value="">Selecione um produto</option>
+            </select>
+          </div>
 
-                <div>
-                    <label for="digitarQuantidade">Quantidade</label>
-                    <input id="digitarQuantidade" type="number" min="1" step="1" value="1">
-                </div>
+          <div>
+            <label for="digitarQuantidade">Quantidade</label>
+            <input
+              id="digitarQuantidade"
+              type="number"
+              min="1"
+              step="1"
+              value="1"
+            />
+          </div>
 
-                <button id="adicionarProduto" type="button">Adicionar produto</button>
-            </div>
+          <button id="adicionarProduto" type="button">Adicionar produto</button>
+        </div>
 
-            <p id="detalhesProduto" class="detalhes-produto"></p>
+        <p id="detalhesProduto" class="detalhes-produto"></p>
 
-            <h3>Itens selecionados</h3>
-            <div id="itensSelecionados" class="tabela-responsiva"></div>
+        <h3>Itens selecionados</h3>
+        <div id="itensSelecionados" class="tabela-responsiva"></div>
 
-            <button id="enviarPedido" type="button" disabled>Enviar pedido</button>
-            <p id="mensagem" class="mensagem" aria-live="polite"></p>
-        </section>
+        <button id="enviarPedido" type="button" disabled>Enviar pedido</button>
+        <p id="mensagem" class="mensagem" aria-live="polite"></p>
+      </section>
     </main>
 
     <script src="cardapio.js"></script>
-</body>
+  </body>
 </html>

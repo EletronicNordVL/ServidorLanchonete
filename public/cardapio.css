@@ -156,13 +156,6 @@ tr.sem-estoque td {
   background-color: #9b3333;
 }
 
-.botao-atualizar {
-  min-height: 32px;
-  margin-right: 6px;
-  padding: 5px 9px;
-  background-color: #4d6475;
-}
-
 #enviarPedido {
   margin-top: 15px;
 }

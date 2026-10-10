@@ -2,14 +2,14 @@
   "name": "servidorlanchonete",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "servidor1-paginas.js",
   "scripts": {
     "s1": "nodemon servidor1-paginas.js",
     "s2": "nodemon servidor2-pedidos.js",
     "s3": "nodemon servidor3-estoque.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Dimitri Dias e Felipe Gambati",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
